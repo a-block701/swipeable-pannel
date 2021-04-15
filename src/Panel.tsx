@@ -10,6 +10,7 @@ import {
   PanResponder,
   ScrollViewProps,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 import { Bar } from './Bar';
 import { Close } from './Close';
@@ -41,6 +42,7 @@ type SwipeablePanelProps = {
   barStyle?: object;
   allowTouchOutside?: boolean;
   scrollViewProps?: ScrollViewProps;
+  colors: Array<string>;
 };
 
 type MaybeAnimated<T> = T | Animated.Value;
@@ -202,6 +204,7 @@ class SwipeablePanel extends Component<SwipeablePanelProps, SwipeablePanelState>
     const {
       noBackgroundOpacity,
       style,
+      colors,
       barStyle,
       closeRootStyle,
       closeIconStyle,
@@ -247,28 +250,37 @@ class SwipeablePanel extends Component<SwipeablePanelProps, SwipeablePanelState>
           ]}
           {...this._panResponder.panHandlers}
         >
+
           {!this.props.noBar && <Bar barStyle={barStyle} />}
           {this.props.showCloseButton && (
             <Close rootStyle={closeRootStyle} iconStyle={closeIconStyle} onPress={this.props.onClose} />
           )}
-          <ScrollView
-            onTouchStart={() => {
-              return false;
-            }}
-            onTouchEnd={() => {
-              return false;
-            }}
-            contentContainerStyle={SwipeablePanelStyles.scrollViewContentContainerStyle}
-            {...this.props.scrollViewProps}
+
+          <LinearGradient
+            colors={colors}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={SwipeablePanelStyles.gradient}
           >
-            {this.state.canScroll ? (
-              <TouchableHighlight>
-                <React.Fragment>{this.props.children}</React.Fragment>
-              </TouchableHighlight>
-            ) : (
-              this.props.children
-            )}
-          </ScrollView>
+            <ScrollView
+              onTouchStart={() => {
+                return false;
+              }}
+              onTouchEnd={() => {
+                return false;
+              }}
+              contentContainerStyle={SwipeablePanelStyles.scrollViewContentContainerStyle}
+              {...this.props.scrollViewProps}
+            >
+              {this.state.canScroll ? (
+                <TouchableHighlight>
+                  <React.Fragment>{this.props.children}</React.Fragment>
+                </TouchableHighlight>
+              ) : (
+                this.props.children
+              )}
+            </ScrollView>
+          </LinearGradient>
         </Animated.View>
       </Animated.View>
     ) : null;
@@ -284,6 +296,9 @@ const SwipeablePanelStyles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
+  gradient: {
+    height: FULL_HEIGHT - 100
+  },
   panel: {
     position: 'absolute',
     height: PANEL_HEIGHT,
@@ -291,7 +306,6 @@ const SwipeablePanelStyles = StyleSheet.create({
     transform: [{ translateY: FULL_HEIGHT - 100 }],
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'white',
     bottom: 0,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
