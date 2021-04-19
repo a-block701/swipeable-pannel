@@ -28,6 +28,7 @@ const STATUS = {
 type SwipeablePanelProps = {
   isActive: boolean;
   onClose: () => void;
+  onScrollX: (object) => void;
   showCloseButton?: boolean;
   fullWidth?: boolean;
   noBackgroundOpacity?: boolean;
@@ -72,7 +73,7 @@ class SwipeablePanel extends Component<SwipeablePanelProps, SwipeablePanelState>
       isActive: false,
       showComponent: false,
       canScroll: false,
-      opacity: new Animated.Value(0),
+      opacity: new Animated.Value(1),
       pan: new Animated.ValueXY({ x: 0, y: FULL_HEIGHT }),
       orientation: FULL_HEIGHT >= FULL_WIDTH ? 'portrait' : 'landscape',
       deviceWidth: FULL_WIDTH,
@@ -209,6 +210,7 @@ class SwipeablePanel extends Component<SwipeablePanelProps, SwipeablePanelState>
       closeRootStyle,
       closeIconStyle,
       onClose,
+      onScrollX,
       allowTouchOutside,
       closeOnTouchOutside,
     } = this.props;
@@ -250,35 +252,34 @@ class SwipeablePanel extends Component<SwipeablePanelProps, SwipeablePanelState>
           ]}
           {...this._panResponder.panHandlers}
         >
-
-          {!this.props.noBar && <Bar barStyle={barStyle} />}
-          {this.props.showCloseButton && (
-            <Close rootStyle={closeRootStyle} iconStyle={closeIconStyle} onPress={this.props.onClose} />
-          )}
-
           <LinearGradient
             colors={colors}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={SwipeablePanelStyles.gradient}
           >
+            {!this.props.noBar && <Bar barStyle={barStyle} />}
+            {this.props.showCloseButton && (
+              <Close rootStyle={closeRootStyle} iconStyle={closeIconStyle} onPress={this.props.onClose} />
+            )}
             <ScrollView
-              onTouchStart={() => {
-                return false;
-              }}
-              onTouchEnd={() => {
-                return false;
-              }}
               contentContainerStyle={SwipeablePanelStyles.scrollViewContentContainerStyle}
               {...this.props.scrollViewProps}
             >
-              {this.state.canScroll ? (
-                <TouchableHighlight>
-                  <React.Fragment>{this.props.children}</React.Fragment>
-                </TouchableHighlight>
-              ) : (
-                this.props.children
-              )}
+              <ScrollView
+                contentContainerStyle={SwipeablePanelStyles.scrollViewContentContainerStyle}
+                {...this.props.scrollViewProps}
+                horizontal={true}
+                onScroll={(e) => this.props.onScrollX(e)}
+              >
+                {this.state.canScroll ? (
+                  <TouchableHighlight>
+                    <React.Fragment>{this.props.children}</React.Fragment>
+                  </TouchableHighlight>
+                ) : (
+                  this.props.children
+                )}
+              </ScrollView>
             </ScrollView>
           </LinearGradient>
         </Animated.View>
