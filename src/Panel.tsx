@@ -28,7 +28,7 @@ const STATUS = {
 type SwipeablePanelProps = {
   isActive: boolean;
   onClose: () => void;
-  onScrollX: (object) => void;
+  onScrollX: (arg0: object) => void;
   showCloseButton?: boolean;
   fullWidth?: boolean;
   noBackgroundOpacity?: boolean;
