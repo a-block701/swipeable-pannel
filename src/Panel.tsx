@@ -270,7 +270,7 @@ class SwipeablePanel extends Component<SwipeablePanelProps, SwipeablePanelState>
                 contentContainerStyle={SwipeablePanelStyles.scrollViewContentContainerStyle}
                 {...this.props.scrollViewProps}
                 horizontal={true}
-                onScroll={(e) => this.props.onScrollX(e)}
+                onScroll={(e) => onScrollX(e)}
               >
                 {this.state.canScroll ? (
                   <TouchableHighlight>
@@ -324,7 +324,6 @@ const SwipeablePanelStyles = StyleSheet.create({
     zIndex: 2,
   },
   scrollViewContentContainerStyle: {
-    width: '100%',
   },
 });
 
